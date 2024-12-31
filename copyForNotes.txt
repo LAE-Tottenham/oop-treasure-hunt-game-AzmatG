@@ -1,0 +1,367 @@
+import random
+
+class RandomName():
+    def __init__(self):
+        self.names = []
+    def give_name(self):
+        return self.names[random.randint(0, len(self.names)-1)]
+
+class Weapon(RandomName):
+    def __init__(self, DMG):
+        self.__DMG = DMG
+        
+    def get_DMG(self):
+        return self.__DMG
+    def get_desc(self):
+        return "this is a weapon"
+    
+class Armour(RandomName):
+    def __init__(self, name, hp):
+        self.__hp = hp
+    def get_hp(self):
+        return self.__hp
+    def get_desc(self):
+        return "This is armour"
+    
+class HealingItem(RandomName):
+    def __init__(self):
+        self._heal = 0
+    def get_heal(self):
+        return self._heal
+    def get_desc(self):
+        return "This is a healing item"
+
+
+class Healing_Flask(HealingItem):
+    def __init__(self):
+        super().__init__()
+        self._heal = 50
+    def get_desc(self):
+        return "This is a Healing Flask: Restores 50hp."
+class Greater_Healing_Flask(HealingItem):
+    def __init__(self):
+        super().__init__()
+        self._heal = 100
+    def get_desc(self):
+        return "This is a Greater Healing Flask: Restores 100hp!"
+class Lesser_Healing_Flask(HealingItem):
+    def __init__(self):
+        super().__init__()
+        self._heal = 25
+    def get_desc(self):
+        return "This is a Lesser Healing Flask: Restores 25hp..."
+
+class Dagger(Weapon):
+    def __init__(self, DMG):
+        super().__init__(DMG)
+        self.names = ["Dagger of Respite", "Broken Dagger", "Holy Dagger"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+class Stick(Weapon):
+    def __init__(self, DMG):
+        super().__init__( DMG)
+        self.names = ["Stick of Doom", "Brownest Stick", "Stick of Calamity"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+class Sword(Weapon):
+    def __init__(self, DMG):
+        super().__init__(DMG)
+        self.names = ["Silver Sword", "Broken Sword", "Sword of The Fallen King"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+class Katana(Weapon):
+    def __init__(self,  DMG):
+        super().__init__(DMG)
+        self.names = ["Issei's Katana", "Samurais's Hope", "Abyssal Blade"]
+        self.name = self.give_name()
+        def get_desc(self):
+            return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+
+
+class IronArmour(Armour):
+    def __init__(self, name, hp):
+        super().__init__(name, hp)
+    def get_desc(self):
+        return f"This is {self.name}: It adds {self.get_DMG()} HP"
+class BedSheets(Armour):
+    def __init__(self, name, hp):
+        super().__init__(name, hp)
+    def get_desc(self):
+        return f"This is {self.name}: It adds {self.get_DMG()} HP"
+class HelmetOfVitality(Armour):
+    def __init__(self, name, hp):
+        super().__init__(name, hp)
+    def get_desc(self):
+        return f"This is {self.name}: It adds {self.get_DMG()} HP"
+
+
+#################################################################################################################################
+import random
+
+class RandomName():
+    def __init__(self, desc):
+        self.names = []
+        self.desc = desc
+    def give_name(self):
+        return self.names[random.randint(0, len(self.names)-1)]
+
+class Weapon(RandomName):
+    def __init__(self, DMG, desc):
+        super().__init__(desc)
+        self.__DMG = DMG
+    def get_DMG(self):
+        return self.__DMG
+    def get_desc(self):
+        return "this is a weapon"
+    
+class Armour(RandomName):
+    def __init__(self, hp, desc):
+        super().__init__(desc)
+        self.__hp = hp
+    def get_hp(self):
+        return self.__hp
+    def get_desc(self):
+        return "This is armour"
+    
+class HealingItem(RandomName):
+    def __init__(self, heal_amount, name):
+        self._heal = heal_amount
+        super().__init__(f"This is a {name}: Restores {heal_amount}hp.")
+    def get_heal(self):
+        return self._heal
+    def get_desc(self):
+        return "This is a healing item"
+
+class Healing_Flask(HealingItem):
+    def __init__(self):
+        super().__init__(50, "Healing Flask")
+    def get_desc(self):
+        return self.desc
+class Greater_Healing_Flask(HealingItem):
+    def __init__(self):
+        super().__init__(100, "Greater Healing Flask")
+    def get_desc(self):
+        return self.desc
+class Lesser_Healing_Flask(HealingItem):
+    def __init__(self):
+        super().__init__(25, "Lesser Healing Flask")
+    def get_desc(self):
+        return self.desc
+
+class Dagger(Weapon):
+    def __init__(self, DMG):
+        super().__init__(DMG)
+        self.names = ["Dagger of Respite", "Broken Dagger", "Holy Dagger"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+class Stick(Weapon):
+    def __init__(self, DMG):
+        super().__init__(DMG)
+        self.names = ["Stick of Doom", "Brownest Stick", "Stick of Calamity"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+class Sword(Weapon):
+    def __init__(self, DMG):
+        super().__init__(DMG)
+        self.names = ["Silver Sword", "Broken Sword", "Sword of The Fallen King"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+class Katana(Weapon):
+    def __init__(self, DMG):
+        super().__init__(DMG)
+        self.names = ["Issei no Katana", "Samurais's Hope", "Abyssal Blade", "夜の剣"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is the {self.name}: It deals {self.get_DMG()} Damage"
+
+class IronArmour(Armour):
+    def __init__(self, hp):
+        super().__init__(hp)
+        self.names = ["Shiny Iron Armour", "The Samurais's Dawn", "Armour of the Fallen", "Completely Normal Armour"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is {self.name}: It adds {self.get_DMG()} HP"
+class BedSheets(Armour):
+    def __init__(self, hp):
+        super().__init__(hp)
+        self.names = ["Bedsheet of The Fallen", "The Comfiest Sheet", "Wet Sheet", "The One Sheet"]
+        self.name = self.give_name()
+    def get_desc(self):
+        return f"This is {self.name}: It adds {self.get_DMG()} HP"
+class HelmetOfVitality(Armour):
+    def __init__(self, hp):
+        super().__init__(hp)
+        self.names = ["The Helmet Name", "A Minion Mask", "A Bicyle Helmet", "A Sleeping Mask"]
+        self.name = self.give_name()
+        
+    def get_desc(self):
+        return f"This is {self.name}: It adds {self.get_DMG()} HP"
+
+dagger = Dagger(10)
+stick = Stick(20)
+sword = Sword(40)
+katana = Katana(50)
+dagger.give_name()
+stick.give_name()
+sword.give_name()
+katana.give_name()
+
+#############################################################################################################################
+    def PlayerExplore(self):
+        playerX, playerY = self.startX, self.startY
+        def IsValidMove(maze, positionX, positionY):
+            print((positionX, positionY))
+            return 0 < positionX < self.mazeSize and 0 < positionY < self.mazeSize and not maze[positionY][positionX]
+        directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+        self.maze[self.startY][self.startX] = "@"
+        while True:
+            clear_console()
+            self.PrintMaze(self.maze)
+            PlayerInput = input()
+            print((playerX, playerY))
+            if PlayerInput == "w":
+                if IsValidMove(self.maze, playerX, playerY-1):
+                    self.maze[playerY][playerX] = False
+                    playerX, playerY = playerX, playerY-1
+                    self.maze[playerY][playerX] = "@"
+                    clear_console()
+                    self.PrintMaze(self.maze)
+                else:
+                    pass
+            elif PlayerInput == "a":
+                if IsValidMove(self.maze, playerX-1, playerY):
+                    self.maze[playerY][playerX] = False
+                    playerX, playerY = playerX-1, playerY
+                    self.maze[playerY][playerX] = "@"
+                    clear_console()
+                    self.PrintMaze(self.maze)
+                    
+                else:
+                    pass
+            elif PlayerInput == "s":
+                if IsValidMove(self.maze, playerX, playerY+1):
+                    self.maze[playerY][playerX] = False
+                    playerX, playerY = playerX, playerY+1
+                    self.maze[playerY][playerX] = "@"
+                    clear_console()
+                    self.PrintMaze(self.maze)
+                    
+                else:
+                    pass
+            elif PlayerInput == "d":
+                if IsValidMove(self.maze, playerX+1, playerY):
+                    self.maze[playerY][playerX] = False
+                    playerX, playerY = playerX+1, playerY
+                    self.maze[playerY][playerX] = "@"
+                    clear_console()
+                    self.PrintMaze(self.maze)
+                else:
+                    pass
+#start off with directions to travel
+#function for movement will work on the base mazethat hasnt been converted, => self, playerpostion, enemy position 
+#every input w a s d => clear console and printmaZE again
+#1) take in user input of wasd, and check if it is a valid movement => the cell is False and = > 0 <= newX < self.mazeSize and 0 <= newY < self.mazeSize
+#convert current cell to False and next cell to player symbol
+#reprint the maze, have a while loop to repeat this process
+######################################################################################################################
+ def endpos(self):
+        
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        visited =set()
+        bfs_queue = [((self.startX, self.startY), 0)]
+        result = []
+        filtered_result = []
+        visited.add((self.startX, self.startY))
+        while bfs_queue:
+            (current_x, current_y), current_distance = bfs_queue.pop(0)
+
+            if current_distance > self.min_distance:
+                result.append((current_x, current_y))
+
+            random.shuffle(directions)
+
+            
+            for dir in directions:
+
+                new_x, new_y = current_x + dir[0], current_y + dir[1]
+
+                if 0 < new_x < self.mazeSize and 0 < new_y < self.mazeSize and not self.maze[new_y][new_x]:
+
+                    if (new_x, new_y) not in visited:
+                        visited.add((new_x, new_y))
+                        bfs_queue.append(((new_x, new_y), current_distance+1))
+        for cell in result:
+            count = 0
+            
+            for dir in directions:
+                neighbour = (cell[0] + dir[0], cell[1] + dir[1])
+                
+                if self.maze[neighbour[0]][neighbour[1]]:
+                    count += 1
+            if count == 3:
+                filtered_result.append(cell)
+                count = 0
+            
+        exit = filtered_result[random.randint(0, len(filtered_result)-1)]
+        self.exitX = exit[1]
+        self.exitY = exit[0]
+
+#adding an exit to the maze
+#use bfs to find a nod with a certain distance away from the start postition
+#its neighbours must all be True except for 1 => means it is an enclosed area
+#distacnce will be determined based on mazesize for generalisation
+#change cell into a string for exit some symbol => "E"
+#1 use bfs to find possible nodes that could be an exit, reaches a threshold of distance
+#2 filters out the nodes based on thier nieghbours to see if it has the above requiremnet
+#3 have a list of possible exits and choose a random one of the list
+
+################################################################################################
+there was an error with the exit generation that resulted in the player start osition being the same as the eit. I tried tp resolve this by 
+making it so the start position is not considered as a viable option
+however smetimes this pos was the only optiona and so an issue would arise and break the generation
+to resolve this i came up with a soltuion
+It would reduce the min distance the exit needed to be and use recursion to find find another posible exit with reduced distance
+each time this occurres an errorcount would be used and if this equates to three...
+it would regenerate the maze again and start finding an exit again, this is because the issue of the maze exit fault
+is very uncommon and so simply regeneating befofre showing the maze is a simple but
+quick way to resolve the issue
+
+
+
+###########################################################################################
+#adding random enemies to the maze
+#number of enemies will be dependent of the maze sieze
+#function will only return a set of co ordinates so it wont be displayed on map
+#itll be like a pokemon style combat system
+#enemies can be anyone aslong as its in path and it is not the start position
+#1) filterout the possible posiition of the enemy => check if is False
+#2) remove the player position => simple
+#3) pick a random number of random coordinates based on mazesize => ask people
+#4) store values in initializer => have a array for enemy positions
+#5) make it so if the player lands on these position a combat system will be engaged
+#6) need a smooth transition back into the map
+
+#chest generation plan
+# probability works, just need to hand out all the locations
+# number of chests will be the no of possible locations // 2
+# in those, dish out the probabilities of chest types 
+# itll be a tuple of position and chest type
+# 1) write a function for number of chests, getting the tupled position and chests type too in one go
+# in main explore function, fimple for loop which changed all position to C, S or G based on if 0, 1 or 2
+
+
+#player, enemy, chests, choose start, choose end position 
+#start pos = position of generation
+##########################################################################################
+game loop works
+now i just need a few more things before the game is fully done
+1) make it so trader cant give same weapons
+2) Pretty up some lore and dialogue
+3) pretty up the ui
+4) fix the trader issue with inputs and getch
