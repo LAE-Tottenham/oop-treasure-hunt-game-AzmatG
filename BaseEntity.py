@@ -6,12 +6,14 @@ class Entity():
         self.__DMG = DMG
         self.__stamina = stamina
         self.__guard = False
-        self.tiredcount = 0
+        
         self.__max_hp = hp
         self.__max_stamina = stamina
         self.__max_DMG = 150
     def get_name(self):
         return f"{self.__name}"
+    def change_hp(self, amount):
+        self.__hp = amount
     def use_energy(self):
         self.__stamina -= 10
     def set_hp(self, amount):
@@ -43,18 +45,14 @@ class Entity():
     def reset(self):
         self.normalise_hp()
         self.recover()
-        self.tiredcount = 0
+        
     def attack(self, entity):
-        if self.tiredcount >= 3:
-            self.set_stamina(self.get_stamina()*-1)
-            self.set_stamina(self.__max_stamina)
-        if self.get_stamina()//self.get_max_stamina() >= 0.5:
-            entity.set_hp(self.get_DMG()*-1 if not entity.get_guard() else self.get_DMG()*-2)
-            self.use_energy()
-        else:
+        if self.get_stamina()<50:
             entity.set_hp(self.get_DMG()/-2 if not entity.get_guard() else self.get_DMG()/-4)
-            self.tiredcount += 1
+            self.use_energy() 
+        else:
+            entity.set_hp(self.get_DMG()*-1 if not entity.get_guard() else self.get_DMG()*0)
             self.use_energy()
             
             
-            
+         

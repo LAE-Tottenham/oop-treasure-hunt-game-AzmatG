@@ -35,7 +35,7 @@ if start == "starting game":
         message("Until, a traveller from a distance land full of adventure, arrived in a small village called 'Salé'. A traveller who would change the fate of Tsubaki forever\n", 0.1)
         message("That travellers name was...\n", 0.2)
     name = get_name()
-    player = Player(name, 200, 20, 100)
+    player = Player(name, 300, 5000, 100)
     maze = Maze(player)
     trader = Trader()
     message(f"{name}...", 0.2)

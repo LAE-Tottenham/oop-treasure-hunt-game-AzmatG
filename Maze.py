@@ -12,7 +12,8 @@ import time
 
 class Maze:
     def __init__(self, player):
-        self.mazeSize = 15
+        self.level = 0
+        self.mazeSize = 15 
         self.startX, self.startY = 2*random.randint(0, self.mazeSize//2 - 1) + 1, 2*random.randint(0, self.mazeSize//2 - 1) + 1
         self.maze = self.Generate()
         self.min_distance = self.mazeSize//2
@@ -27,10 +28,10 @@ class Maze:
             [30, 50, 20]  #4
         ]
 
-        self.level = 0
+        
         self.ending = False
         self.enclosed_areas = None
-
+        self.dead = False
     def CleanUp(self):
         self.maze = self.Generate()
 
@@ -137,7 +138,7 @@ class Maze:
     def SpawnEnemy(self):
 
         maze = self.maze
-        no_of_enemies = self.mazeSize//5
+        no_of_enemies = 3 + self.level
         enemy_locations = []
         
         for cell in maze:
@@ -216,10 +217,13 @@ class Maze:
             ).ask()
             if response == "Select from Weapons":
                 clear_console()
+                display_weapons.append("Back")
                 response = questionary.select(
                     "Which weapon would you like pick up?",
                     choices=display_weapons
                 ).ask()
+                if response == "Back":
+                    return self.view_chest(items)
                 chosen_weapon = weapons[display_weapons.index(response)]
                 try:
                     self.player.pick_up(chosen_weapon)
@@ -307,14 +311,28 @@ class Maze:
                 good_end(self.player)
             if status == "lose":
                 choose_end(self.player, boss)
-                            
+            
             player_move = state.Choose()
             state.TransitionState()
-            state.Implement(player_move)   
+            state.ImplementPlayer(player_move)   
+
+            status = state.Check_Battle_Status()
+            if status == "win":
+                message(f"{boss.get_name()} wobbled and fell to their knees...\n", 0.2)
+                message(f"You slowly walked over to them, bloodied and battered", 0.1)
+                message(f"\nYou looked down at them, with a face of pity, before swiftly ending them in one swift blow...", 0.3)
+                message(f"\nThe battle was over...", 0.1)
+                good_end(self.player)
+                
+            if status == "lose":
+                choose_end(self.player, boss)
+            state.ImplementEnemyMove()
 
     def PlayerExplore(self):
         #set up maze and generate needed assets
         clear_console()
+        self.mazeSize = 15 + self.level*4
+        self.maze = self.Generate()
         enemies = self.SpawnEnemy()
         self.EndPos()
         chests = self.Chests()
@@ -341,126 +359,147 @@ class Maze:
         
         alive = True
         while True:
+            clear_console()
             if not alive:
                 
-                clear_console()
                 game_over()
+                self.dead = True
                 break
-            clear_console()
-            
-            self.PrintMaze(self.maze)
-            print(f"LEVEL {self.level}")
-            PlayerInput = getch.getch()
-            
-            
-            for enemy in enemies:
-                if playerX == enemy[0] and playerY == enemy[1]:
-                    clear_console()
-                    print("You encountered an enemy!\nGet ready for Combat!")
-                    enemies.remove((playerX, playerY))
-                    enemy = Enemy(self.level)
-                    state = CombatTurnStateMachine(self.player, enemy, False)
-                    time.sleep(3)
-                    while True:
-                        status = state.Check_Battle_Status()
-                        if status == "win":
-                            self.player.reset()
-                            self.player.get_gold(enemy)
-                            print(f"For fighting {enemy.get_name()}, you were awarded {enemy.gold} Gold!")
-                            time.sleep(3)
-                            break
-                        if status == "lose":
-                            
-                            alive = False
-                            time.sleep(3)
-                            break
-                            
-                        player_move = state.Choose()
-                        state.TransitionState()
-                        state.Implement(player_move)
-            if PlayerInput == "i":
-                self.player.loadout()
                 
-            if PlayerInput == "w":
-                if IsValidMove(self.maze, playerX, playerY-1):
-                    self.maze[playerY][playerX] = False
-                    playerY = playerY-1
-                    self.maze[playerY][playerX] = "◈"
-                    clear_console()
-                    self.PrintMaze(self.maze)
-            elif PlayerInput == "a":
-                if IsValidMove(self.maze, playerX-1, playerY):
-                    self.maze[playerY][playerX] = False
-                    playerX = playerX-1
-                    self.maze[playerY][playerX] = "◈"
-                    clear_console()
-                    self.PrintMaze(self.maze)
+            else:    
+                clear_console()
                 
-            elif PlayerInput == "s":
-                if IsValidMove(self.maze, playerX, playerY+1):
-                    self.maze[playerY][playerX] = False
-                    playerY = playerY+1
-                    self.maze[playerY][playerX] = "◈"
-                    clear_console()
-                    self.PrintMaze(self.maze)
+                self.PrintMaze(self.maze)
+                print(f"LEVEL {self.level}")
+                PlayerInput = getch.getch()
                 
-            elif PlayerInput == "d":
-                if IsValidMove(self.maze, playerX+1, playerY):
-                    self.maze[playerY][playerX] = False
-                    playerX= playerX+1
-                    self.maze[playerY][playerX] = "◈"
-                    clear_console()
-                    self.PrintMaze(self.maze)
+                
+                for enemy in enemies:
+                    if playerX == enemy[0] and playerY == enemy[1]:
+                        clear_console()
+                        print("You encountered an enemy!\nGet ready for Combat!")
+                        enemies.remove((playerX, playerY))
+                        enemy = Enemy(self.level)
+                        state = CombatTurnStateMachine(self.player, enemy, False)
+                        input()
+                        while True:
+                            status = state.Check_Battle_Status()
+                            if status == "win":
+                                self.player.reset()
+                                self.player.get_gold(enemy)
+                                print(f"For fighting {enemy.get_name()}, you were awarded {enemy.gold} Gold!")
+                                input()
+                                break
+                            if status == "lose":
+                                
+                                alive = False
+                                input()
+                                break
+                            player_move = state.Choose()
+                            state.TransitionState()
+                            state.ImplementPlayer(player_move)
+                            status = state.Check_Battle_Status()
 
-            if (playerX, playerY) == (self.exitX, self.exitY):
-                if self.level == 4:
-                    Boss = questionary.confirm("Warning, The next level is a Boss Battle. Are you sure you want to Continue?").ask()
+                            if status == "win":
+                                self.player.reset()
+                                self.player.get_gold(enemy)
+                                print(f"For fighting {enemy.get_name()}, you were awarded {enemy.gold} Gold!")
+                                input()
+                                break
+                            if status == "lose":
+                                
+                                alive = False
+                                input()
+                                break
+                            if status == "run away":
+                                print("You Ran Away and was awarded nothing...")
+                                input()
+                                break
+                            state.ImplementEnemyMove()
+
+
+                if PlayerInput == "i":
+                    self.player.loadout()
                     
-                    if Boss:
-                        self.ending = True
-                        self.TriggerBossBattle()
-                        break
+                if PlayerInput == "w":
+                    if IsValidMove(self.maze, playerX, playerY-1):
+                        self.maze[playerY][playerX] = False
+                        playerY = playerY-1
+                        self.maze[playerY][playerX] = "◈"
+                        clear_console()
+                        self.PrintMaze(self.maze)
+                elif PlayerInput == "a":
+                    if IsValidMove(self.maze, playerX-1, playerY):
+                        self.maze[playerY][playerX] = False
+                        playerX = playerX-1
+                        self.maze[playerY][playerX] = "◈"
+                        clear_console()
+                        self.PrintMaze(self.maze)
+                    
+                elif PlayerInput == "s":
+                    if IsValidMove(self.maze, playerX, playerY+1):
+                        self.maze[playerY][playerX] = False
+                        playerY = playerY+1
+                        self.maze[playerY][playerX] = "◈"
+                        clear_console()
+                        self.PrintMaze(self.maze)
+                    
+                elif PlayerInput == "d":
+                    if IsValidMove(self.maze, playerX+1, playerY):
+                        self.maze[playerY][playerX] = False
+                        playerX= playerX+1
+                        self.maze[playerY][playerX] = "◈"
+                        clear_console()
+                        self.PrintMaze(self.maze)
+
+                if (playerX, playerY) == (self.exitX, self.exitY):
+                    if self.level == 4:
+                        Boss = questionary.confirm("Warning, The next level is a Boss Battle. Are you sure you want to Continue?").ask()
+                        
+                        if Boss:
+                            self.ending = True
+                            self.TriggerBossBattle()
+                            break
+                        else:
+                            break
+
+                    self.level += 1
+                    self.mazeSize += 4
+                    print("Well done! You have completed the maze!")
+                    again = questionary.confirm("Would you like to go to the next level?").ask()
+                    if again:
+                        self.NextLevel()
+                        return self.PlayerExplore()
                     else:
+                        self.mazeSize = 15
+                        self.startX, self.startY = 2*random.randint(0, self.mazeSize//2 - 1) + 1, 2*random.randint(0, self.mazeSize//2 - 1) + 1
+                        self.maze = self.Generate()
+                        self.exitX, self.exitY  = None, None
+                        self.enclosed_areas = None
                         break
+                    
 
-                self.level += 1
-                self.mazeSize += 4
-                print("Well done! You have completed the maze!")
-                again = questionary.confirm("Would you like to go to the next level?").ask()
-                if again:
-                    self.NextLevel()
-                    return self.PlayerExplore()
-                else:
-                    self.mazeSize = 15
-                    self.startX, self.startY = 2*random.randint(0, self.mazeSize//2 - 1) + 1, 2*random.randint(0, self.mazeSize//2 - 1) + 1
-                    self.maze = self.Generate()
-                    self.exitX, self.exitY  = None, None
-                    self.enclosed_areas = None
-                    self.level = 0
-                    break
-                
+                if (playerX, playerY) in chest_type:
+                    
+                    type = chest_type[(playerX, playerY)]
+                    
+                    chest_items = self.generate_chest_loot(type)
 
-            if (playerX, playerY) in chest_type:
-                
-                type = chest_type[(playerX, playerY)]
-                
-                chest_items = self.generate_chest_loot(type)
+                    open_chest = questionary.confirm("You found a chest! Would you like to Open it?").ask()
+                    if open_chest:
+                        self.view_chest(chest_items)
+                        if (playerX, playerY) == key:
+                            input("In a corner of the Chest you found A key!⚿ You can now Leave!")
+                            have_key = True
+                        del chest_type[(playerX, playerY)]
+                    else:
+                        pass
 
-                open_chest = questionary.confirm("You found a chest! Would you like to Open it?").ask()
-                if open_chest:
-                    self.view_chest(chest_items)
-                    if (playerX, playerY) == key:
-                        input("In a corner of the Chest you found A key!⚿ You can now Leave!")
-                        have_key = True
-                    del chest_type[(playerX, playerY)]
-                else:
-                    pass
-
-player = Player("Ryan", 500, 200, 100)
+player = Player("Ryan", 50, 2, 100)
 
 maze = Maze(player)
 
-#maze.PlayerExplore()
+
 
 
 

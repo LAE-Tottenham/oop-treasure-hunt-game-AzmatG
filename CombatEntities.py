@@ -16,6 +16,7 @@ class Player(Entity):
         self.currentarmour = ""
         self.inventory = []
         self.gold = 0
+        
     def equip(self, item):
         if type(item) == Weapon:
             if self.currentweapon == "":
@@ -66,7 +67,14 @@ class Player(Entity):
         if self.currentarmour != "":
             return self.get_max_hp() + self.currentarmour.get_def()
         return self.get_max_hp()
-    
+    def normalise_hp(self):
+        if self.currentarmour != "":
+            self.change_hp(self.get_max_hp() + self.currentarmour.get_def())
+        else:
+            self.change_hp(self.get_max_hp()) 
+    def reset(self):
+        self.normalise_hp()
+        self.recover()
     def defend(self):
 
         self.set_guard(True)
@@ -174,6 +182,7 @@ class Player(Entity):
                 
                 weapons = [item for item in self.inventory if isinstance(item, Weapon) and item != self.currentweapon]
                 choices = [item.get_desc() for item in self.inventory if isinstance(item, Weapon) and item != self.currentweapon]
+                choices.append("Back")
                 if len(weapons) == 0:
                     print("Nothing to see here...") 
                     PlayerInput = getch.getch()
@@ -181,9 +190,11 @@ class Player(Entity):
                         return self.loadout()
                 response = questionary.select(
                     "Available Weapons...",
-                    choices=[item.get_desc() for item in self.inventory if isinstance(item, Weapon) and item != self.currentweapon]
+                    choices=choices
                 ).ask()
                 clear_console()
+                if response == "Back":
+                    return self.loadout()
                 chosen_weapon = weapons[choices.index(response)]
                 self.equip(chosen_weapon)
                 print(f"You have now equiped The [bold red]{chosen_weapon.get_name()}[/bold red]")
@@ -198,6 +209,7 @@ class Player(Entity):
                     print(f"Your current Armour is: [bold purple]{self.currentarmour.get_desc()}[/bold purple]")
                 armours = [item for item in self.inventory if isinstance(item, Armour)]
                 choices = [item.get_desc() for item in self.inventory if isinstance(item, Armour)]
+                choices.append("Back")
                 if len(armours) == 0:
                     print("Nothing to see here...") 
                     PlayerInput = getch.getch()
@@ -205,9 +217,11 @@ class Player(Entity):
                         return self.loadout()
                 response = questionary.select(
                     "Available Armour...",
-                    choices=[item.get_desc() for item in self.inventory if isinstance(item, Armour)]
+                    choices=choices
                     ).ask()
                 clear_console()
+                if response == "Back":
+                    return self.loadout()
                 chosen_armour = armours[choices.index(response)]
                 self.equip(chosen_armour)
                 print(f"You have now equiped The [bold purple]{chosen_armour.get_name()}[/bold purple]")

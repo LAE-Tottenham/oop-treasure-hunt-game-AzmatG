@@ -95,13 +95,23 @@ class Lobby():
                 clear_console()
                 enter = questionary.confirm("You cant leave until you find the exit. Would you like to enter the Maze?").ask()
                 if enter:
+                    if self.maze.level > 0:
+                        range = ["0", "1", "2", "3", "4"]
+
+                        level = questionary.select(
+                            "Which level would you like to start from",
+                            choices=range
+                        ).ask()
+                        self.maze.level = int(level)
                     self.maze.PlayerExplore()
-                    if not self.maze.ending:
+                    if not self.maze.ending and not self.maze.dead:
                         lobby[mazeY][mazeX] = "#"
                         playerY -= 1
                         lobby[playerY][playerX] = "◈"
                         clear_console()
                         self.PrintLobby(lobby) 
+                    else:
+                        break
                     
 
                 

@@ -163,7 +163,8 @@ class ChooseActionState(BaseCombatState):
                 "Heal",
                 "View Player",
                 "View Enemy",
-                "Loadout"
+                "Loadout", 
+                "Run Away"
             ]
         ).ask()
         if move == "Attack":
@@ -224,32 +225,84 @@ class ChooseActionState(BaseCombatState):
         elif move == "Loadout":
             self.player.loadout()
             return self.OnEnter()
-        
+        elif move == "Run Away":
+            run = questionary.confirm("Would you like to Run Away? Warning This could Potentially kill you!").ask()
+            if run:
+                prob2 = random.randint(0, 10)
+                prob1 = random.randint(0, 10)
+                if prob2 == prob1:  
+                    return "instant death"
+                else:
+                    return "run away"
+            else:
+                return self.OnEnter()
+                
     def CycleState(self):
         return "implement"
 class ImplementActionState(BaseCombatState):
-    def __init__(self, context, player, enemy, boss):
+    def __init__(self, context, player, enemy, state, boss=False ):
         super().__init__(context, player, enemy)
         self.boss = boss
-    def OnEnter(self, player_move):
+        self.state = state
+    def PlayerOnEnter(self, player_move):
         if self.boss: #for the boss
-            enemy_move = self.enemy.random_move()
+            
+            if player_move == "instant death":
+                print("You tried to run away but failed...")
+
+                self.player.set_hp(-9999)
+                input()        
+                
+            if player_move == "run away":
+                print("NO ESCAPE...")
+                input()
+                
             if player_move == "defend":
                 self.player.defend()
                 print(self.Boss_Defense_Message())
-                time.sleep(3)
-            if enemy_move == 1:
-                self.enemy.set_guard(True)
-                print(f"{self.enemy.get_name()} slowly brought their sword before them. Providing ample defense against your attacks...")
-                time.sleep(3)
+                input()
+            
             if player_move == "attack":
                 self.player.attack(self.enemy)
                 print(self.Random_Attack_Boss_Message())
-                time.sleep(3)
+                input()
+            
+            
+            
+        
+        else: #for all other entities
+            if player_move == "instant death":
+                print("You tried to run away but failed...")
+
+                self.player.set_hp(-9999)
+                input()        
+            if player_move == "run away":
+                print("You ran away")
+                self.state.run_away = True
+                input()
+            if player_move == "defend":
+                self.player.defend()
+                print(self.Random_Defense_Message())
+                input()
+            
+            if player_move == "attack":
+                self.player.attack(self.enemy)
+                print(self.Random_Attack_Message())
+                input()
+            
+        self.player.set_guard(False)
+            
+    def EnemyOnEnter(self):
+        enemy_move = self.enemy.random_move()
+        if self.boss:
+            if enemy_move == 1:
+                self.enemy.set_guard(True)
+                print(f"{self.enemy.get_name()} slowly brought their sword before them. Providing ample defense against your attacks...")
+                input()
             if enemy_move == 0:
                 self.enemy.attack(self.player)
                 print(self.Random_Boss_Message())
-                time.sleep(3)
+                input()
             if enemy_move == 2:
                 guard = questionary.confirm(f"Warning {self.enemy.get_name()} is about to unleash a big attack! Would you like to activate your guard if it hasnt already been activated?").ask()
                 if guard:
@@ -259,61 +312,50 @@ class ImplementActionState(BaseCombatState):
                     time.sleep(1)
                     message("\nBerserk...", 0.3)
                     message("Before you could see anything, the attack was over... Your decision to guard lowered its devastation", 0.1)
-
                 else:
                     self.enemy.big_attack(self.player)
                     message(f"{self.enemy.get_name()} held out their sword, pointing it towards you and chanted the words...", 0.1)
                     time.sleep(1)
                     message("\nBerserk...", 0.3)
                     message("You looked down and noticed a gaping hole in your body...", 0.2)
-                time.sleep(3)
+                input()
+            
 
-            self.player.set_guard(False)
-            self.enemy.set_guard(False)
-        else: #for all other entities
-            enemy_move = self.enemy.random_move()
-            if player_move == "defend":
-                self.player.defend()
-                print(self.Random_Defense_Message())
-                time.sleep(3)
+        else:
             if enemy_move == 1:
                 self.enemy.set_guard(True)
                 print(f"{self.enemy.get_name()} went on the defensive!")
-                time.sleep(3)
-            if player_move == "attack":
-                self.player.attack(self.enemy)
-                print(self.Random_Attack_Message())
-                time.sleep(3)
-            
+                input()
+            if enemy_move == 2:
+                print(f"{self.enemy.get_name()} stared at you menacingly... But He didn't seen to do anything?")
+                input()
             if enemy_move == 0:
                 self.enemy.attack(self.player)
                 print(self.Random_Enemy_Message())
-                time.sleep(3)
-        
-            if enemy_move == 2:
-                print(f"{self.enemy.get_name()} stared at you menacingly... But He didn't seen to do anything?")
-                time.sleep(3)
-        
-            self.player.set_guard(False)
-            self.enemy.set_guard(False)
-        
+                input()
+        self.enemy.set_guard(False)
     def CycleState(self):
         return "choose"
 class CombatTurnStateMachine():
-    def __init__(self, player, enemy, boss):
+    def __init__(self, player, enemy, boss=False):
         self.player = player
         self.enemy = enemy
         self.boss = boss
         self.states = {
             "choose" : ChooseActionState(self, player, enemy),
-            "implement" : ImplementActionState(self, player, enemy, boss)
+            "implement" : ImplementActionState(self, player, enemy, self, boss)
         }
         self.currentstate = "choose"
+        self.run_away = False
     def Choose(self):
         return self.states["choose"].OnEnter()
-    def Implement(self, player_move):
-        return self.states["implement"].OnEnter(player_move)
+    def ImplementPlayer(self, player_move):
+        return self.states["implement"].PlayerOnEnter(player_move)
+    def ImplementEnemyMove(self):
+        return self.states["implement"].EnemyOnEnter()
     def Check_Battle_Status(self):
+        if self.run_away:
+            return "run away"
         if self.player.get_hp() <= 0:
             print("You lose!")
             return "lose"
@@ -329,13 +371,14 @@ class CombatTurnStateMachine():
 
 
 
-player = Player("Bob", 200, 20, 100)
-enemy = Enemy(4)
+player = Player("Bob", 200, 2000, 100)
+enemy = Enemy(1)
 boss = Boss()
-random_weapon = CreateRandomWeapon(1)
-heal = HealingItem(2)
+random_weapon = CreateRandomWeapon(3)
+heal = HealingItem(0)
 player.pick_up(random_weapon.make_weapon())
 player.pick_up(heal)
 state = CombatTurnStateMachine(player, boss, True)
+
 
 #for tomorrow, add healing to the loadout, add proper ui for the fighting, add a way for the fight to end

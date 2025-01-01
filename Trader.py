@@ -8,16 +8,23 @@ import questionary
 from rich import print
 from System import clear_console
 from CombatEntities import Player
-import time
+
 from Items import CreateRandomWeapon, Armour, HealingItem
 clear_console()
+
+    
 class Trader():
     def __init__(self):
         self.name = "Hanayome"
         self.quests = []
         
         self.weapons = [(CreateRandomWeapon(1).make_weapon(), 1), (CreateRandomWeapon(2).make_weapon(), 2), (CreateRandomWeapon(2).make_weapon(), 2), (CreateRandomWeapon(3).make_weapon(), 3)]
+        if self.weapons[1] == self.weapons[2]:
+            self.weapons[1] = (CreateRandomWeapon(2).make_weapon(), 2)
+
         self.display_weapons  = []
+        
+
         for x in self.weapons:
             if x[1] == 1:
                 self.display_weapons.append(f"{x[0].get_desc()} || 100 Gold")
@@ -143,10 +150,10 @@ class Trader():
             if have_item:
                 player.gold += 1000
                 print("Wow... Ive heard a lot about the Sticks but...Seeing one in person truly is a marvel. Thank you. Take this...\n+1000 Gold!")
-                time.sleep(3)
+                input()
             else:
                 print("You do not have a Stick... Perhaps take a look in the upper levels of the maze?")
-                time.sleep(3)
+                input()
             clear_console()
             return self.events(player)
         
@@ -159,10 +166,10 @@ class Trader():
             if have_item:
                 player.gold += 500
                 print("It is a beauty isn't it? Here, Take this\n+500 Gold!")
-                time.sleep(3)
+                input()
             else:
                 print("You do not have an Abyssal Blade... Perhaps take a look in the middle levels of the maze?")
-                time.sleep(3)
+                input()
             clear_console()
             return self.events(player)
         if response == "Bring me 夜の剣 || 500 Gold":
@@ -174,10 +181,10 @@ class Trader():
             if have_item:
                 player.gold += 500
                 print("The blade of the Night, 夜の剣. it doesn't get much better than this... Here, Take this\n+500 Gold!")
-                time.sleep(3)
+                input()
             else:
                 print("You do not have a 夜の剣... Perhaps take a look in the middle levels of the maze?")
-                time.sleep(3)
+                input()
             clear_console()
             return self.events(player)
         if response == "Bring me a Broken Dagger || 100 Gold":
@@ -190,16 +197,15 @@ class Trader():
                 player.gold += 100
                 print("A Broken Dagger... No doubt left behind by a fallen hunter... I'll make sure to deliver this to their family...thank you") 
                 print("100 Gold!")
-                time.sleep(3)
-            else:
+                input()
                 print("You do not have a Broken Dagger... Perhaps take a look in the Lower levels of the maze?")
-                time.sleep(3)
+                input()
             clear_console()
             return self.events(player)
         if response == "Back":
             return self.events(player)
     def buy_arms(self, player):
-        
+        print(f"You currently have {player.gold} Gold!\n")
         response = questionary.select(
             "Have a look!",
             choices = [
@@ -259,7 +265,7 @@ class Trader():
                 
             if response_index == 4:
                 return self.buy_arms(player)
-            time.sleep(3)
+            input()
             clear_console()
             return self.buy_arms(player)
         elif response == "Armour":
@@ -290,14 +296,14 @@ class Trader():
 
             if response_index == 2:
                 return self.buy_arms(player)
-            time.sleep(3)
+            input()
             clear_console()
             return self.buy_arms(player)
         else:
             return self.events(player)
         
     def buy_potions(self, player):
-
+        print(f"You currently have {player.gold} Gold!\n")
         choices = [HealingItem(0), HealingItem(1), HealingItem(2)]
         display = [f"{HealingItem(0).get_desc()} || 25 Gold", f"{HealingItem(1).get_desc()} || 100 Gold", f"{HealingItem(2).get_desc()} || 150 Gold"]
 
@@ -327,7 +333,7 @@ class Trader():
                 player.pick_up(choices[index])
         if index == 3:
             return self.events(player)
-        time.sleep(3)
+        input()
         clear_console()
         return self.events(player)
     
