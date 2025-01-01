@@ -323,9 +323,10 @@ class Maze:
                 message(f"\nYou looked down at them, with a face of pity, before swiftly ending them in one swift blow...", 0.3)
                 message(f"\nThe battle was over...", 0.1)
                 good_end(self.player)
-                
+                break
             if status == "lose":
                 choose_end(self.player, boss)
+                break
             state.ImplementEnemyMove()
 
     def PlayerExplore(self):

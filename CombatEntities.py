@@ -78,7 +78,7 @@ class Player(Entity):
     def defend(self):
 
         self.set_guard(True)
-
+        self.set_stamina(50)
     def view_stats(self):
     
         with Progress(console=console) as progress:
@@ -265,7 +265,7 @@ class Enemy(Entity):
             names = ["Skeleton", "Goblin", "Skeleton with a Helmet"]
             name = names[random.randint(0, len(names)-1)]
             hp = 200
-            DMG = 10
+            DMG = 20
             stamina = 100
             self.gold = 15
         if level == 1:
@@ -281,7 +281,7 @@ class Enemy(Entity):
             names = ["Sneaky Goblin", "Skeleton Warrior", "Green Laekan"]
             name = names[random.randint(0, len(names)-1)]
             hp = 400
-            DMG = 20
+            DMG = 30
             stamina = 100
             self.gold = 100
         if level == 3:
@@ -289,7 +289,7 @@ class Enemy(Entity):
             names = ["Undead Corpse", "Faller", "Vampire", "Beast"]
             name = names[random.randint(0, len(names)-1)]
             hp = 500
-            DMG = 30
+            DMG = 40
             stamina = 150
             self.gold = 200
 
