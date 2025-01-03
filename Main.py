@@ -1,11 +1,8 @@
-#get spawned into the lobby
-#LOBBY => Trader and maze
-# Trader is a simple symbol First time engages an introduction but afterwars just engages events
-#Maze => Calls PlayerExplore IF THIS BREAKS GET SPAWNED BACK TO LOBBY => if maze.level > 0 make it so you can choose from level 0 -> current
-#Else Just continue the explortion
-#Once lvl4 is completed, initiate boss battle
-#if win, have little dialogue and lore and break story and finish => GOOD END
-#IF lose, Have a shocking convo with boss, they can talk, beckons you to join => if you do => hidden end else: die (bad end) 
+#NOTES ON HOW TO PLAY AND IIMPORTANT NOTICES
+#install getch, art, questionary and rich
+#sometimes the ui bugs out, simply rechoose your option multiple times to fix this
+#Do not press anything whilst the console is printing something out... It will destroy the format of printing
+#After you install all aspects, play this file!
 
 from CombatEntities import Player, Enemy, Boss
 from Trader import Trader
