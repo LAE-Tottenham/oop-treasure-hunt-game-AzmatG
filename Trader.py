@@ -78,7 +78,7 @@ class Trader():
         elif action == "Maybe later...":
             clear_console()
             print("I see.. Maybe next time!")
-
+            
     def talk_event(self, player):
         response = questionary.select(
             "What should we talk about!",
@@ -116,7 +116,7 @@ class Trader():
             print("Well, without a job, theres only one way. Being a Maze Hunter. We do not know why but, The Raiju love carrying around gold... If your considering going, be careful yeah?")
             print("Also, before I forget. Bring a couple items from the maze to me and I'll take it from you for Gold!")
             input()
-            
+            clear_console()
             return self.talk_event(player)
         elif response == "Hello!":
             print("[bold purple]Hi?...... I know i said I'd chat with you but, this really isnt what i had in mind")
